@@ -1,5 +1,5 @@
 all: AVL.o main.o
-	gcc -std=c11 -o lab06 AVL.o Heap.o main.o -Werror -Wall -pedantic
+	gcc -std=c11 -o lab06 AVL.o main.o -Werror -Wall -pedantic
 
 AVL.o: AVL.c
 	gcc -std=c11 -o AVL.o -c AVL.c -Werror -Wall -pedantic
