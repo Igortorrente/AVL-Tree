@@ -130,115 +130,70 @@ void insertNode(node** Tree, unsigned int id, long key, char* flag){
 }
 
 void treatLeftReduction(node** Tree, char* flag){
+
     (*Tree)->balance++;
+
     if((*Tree)->balance == 1)
         *flag = 0;
+
     else if ((*Tree)->balance == 2)
     {
-        short int var = (*Tree)->rightSon->balance;
+        short shortCut = (*Tree)->rightSon->balance;
 
-        if(var == 0 || var == 1)
-        {
-            node *p = (*Tree)->rightSon,*q = p->leftSon;
-            p->leftSon = (*Tree);
-            (*Tree)->rightSon = q;
-            (*Tree) = p;
-
-            if(var == 0)
-            {
-                *flag = 0;
-                p->leftSon->balance = 1;
-                p->balance = -1;
-            }
-            else
-            {
-                p->leftSon->balance = 0;
-                p->balance = 0;
-            }
-        }
-        else if(var == -1)
-        {
-            node *p = (*Tree)->rightSon->leftSon, *q = p->leftSon, *r = p->rightSon;
-            p->leftSon = (*Tree);
-            p->rightSon = (*Tree)->rightSon;
-            (*Tree)->rightSon = q;
-            p->rightSon->leftSon = r;
-
-            if(p->balance == -1)
-            {
+        switch (shortCut){
+            case 1:
+                leftRotation(Tree);
                 (*Tree)->balance = 0;
-                p->rightSon->balance = 1;
-            }
-            else if(p->balance  == 1)
-            {
+                (*Tree)->leftSon->balance = 0;
+                *flag = 1;
+                break;
+            case 0:
+                leftRotation(Tree);
                 (*Tree)->balance = -1;
-                p->rightSon->balance = 0;
-            }
-            else
-            {
-                (*Tree)->balance = 0;
-                p->rightSon->balance = 0;
-            }
-            (*Tree) = p;
-            p->balance = 0;
+                (*Tree)->leftSon->balance = 1;
+                *flag = 0;
+                break;
+            case -1:
+                shortCut = (*Tree)->rightSon->leftSon->balance;
+                rightRotation(&(*Tree)->rightSon);
+                leftRotation(Tree);
+                balanceFix(*Tree, shortCut);
+                *flag = 1;
+                break;
         }
     }
 }
 
 void treatRightReduction(node** Tree, char* flag){
     (*Tree)->balance--;
+
     if((*Tree)->balance == -1)
         *flag = 0;
+
     else if ((*Tree)->balance == -2)
     {
-        short int var = (*Tree)->leftSon->balance;
-        if(var == 0 || var == -1)
-        {
-            node *p = (*Tree)->leftSon,*q = p->rightSon;
-            p->rightSon = (*Tree);
-            (*Tree)->leftSon = q;
-            switch(p->balance)
-            {
-                case 0:
-                    (*Tree)->balance = -1;
-                    p->balance = +1;
-                    *flag = 0;
-                    break;
-                case -1:
-                    (*Tree)->balance = 0;
-                    p->balance = 0;
-                    break;
-                default:
-                    break;
-            }
-            (*Tree) = p;
-        }
-        else if(var == 1)
-        {
-            node *p = (*Tree)->leftSon->rightSon, *q = p->leftSon,*r = p->rightSon;
-            p->rightSon = (*Tree);
-            p->leftSon = (*Tree)->leftSon;
-            p->leftSon->rightSon = q;
-            (*Tree)->leftSon = r;
-            switch(p->balance)
-            {
-                case -1:
-                    (*Tree)->balance = 0;
-                    p->leftSon->balance = 1;
-                    break;
-                case 1:
-                    (*Tree)->balance = -1;
-                    p->leftSon->balance =  0;
-                    break;
-                case 0:
-                    (*Tree)->balance =  0;
-                    p->leftSon->balance =  0;
-                    break;
-                default:
-                    break;
-            }
-            (*Tree) = p;
-            p->balance = 0;
+        short shortCut = (*Tree)->leftSon->balance;
+
+        switch (shortCut){
+            case -1:
+                rightRotation(Tree);
+                (*Tree)->balance = 0;
+                (*Tree)->rightSon->balance = 0;
+                *flag = 1;
+                break;
+            case 0:
+                rightRotation(Tree);
+                (*Tree)->balance = 1;
+                (*Tree)->rightSon->balance = -1;
+                *flag = 0;
+                break;
+            case 1:
+                shortCut = (*Tree)->leftSon->rightSon->balance;
+                leftRotation(&(*Tree)->leftSon);
+                rightRotation(Tree);
+                balanceFix(*Tree, shortCut);
+                *flag  = 1;
+                break;
         }
     }
 }
