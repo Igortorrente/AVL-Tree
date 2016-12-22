@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MAX(x,y) (((x) > (y))?(x):(y))
+#define MAX(x, y) ((x > y) ? x : y)
 
 //TODO: Colocar essa arvore dentro de uma struct
 //Node of tree

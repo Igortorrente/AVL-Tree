@@ -59,25 +59,23 @@ void treatLeftInsertion(node** Tree, char* flag){
 
     (*Tree)->balance--;
 
-    if((*Tree)->balance == 0)
-        *flag = 0;
-
-    else if((*Tree)->balance == -2)
-    {
-        if((*Tree)->leftSon->balance == -1)
-        {
-            rightRotation(Tree);
-            (*Tree)->balance = 0;
-            (*Tree)->rightSon->balance = 0;
-        }
-        else
-        {
-            int balance = (*Tree)->leftSon->rightSon->balance;
-            leftRotation(&(*Tree)->leftSon);
-            rightRotation(Tree);
-            balanceFix(*Tree, balance);
-        }
-        *flag = 0;
+    switch((*Tree)->balance){
+        case 0:
+            *flag = 0;
+            break;
+        case -2:
+            if((*Tree)->leftSon->balance == -1){
+                rightRotation(Tree);
+                (*Tree)->balance = 0;
+                (*Tree)->rightSon->balance = 0;
+            } else {
+                int balance = (*Tree)->leftSon->rightSon->balance;
+                leftRotation(&(*Tree)->leftSon);
+                rightRotation(Tree);
+                balanceFix(*Tree, balance);
+            }
+            *flag = 0;
+            break;
     }
 }
 
@@ -85,46 +83,40 @@ void treatRightInsertion(node** Tree, char* flag){
 
     (*Tree)->balance++;
 
-    if((*Tree)->balance == 0)
-        *flag = 0;
-
-    else if((*Tree)->balance == 2)
-    {
-        if((*Tree)->rightSon->balance == 1)
-        {
-            leftRotation(Tree);
-            (*Tree)->balance = 0;
-            (*Tree)->leftSon->balance = 0;
-        }
-        else
-        {
-            int balance = (*Tree)->rightSon->leftSon->balance;
-            rightRotation(&(*Tree)->rightSon);
-            leftRotation(Tree);
-            balanceFix(*Tree, balance);
-        }
-        *flag = 0;
+    switch((*Tree)->balance){
+        case 0:
+            *flag = 0;
+            break;
+        case 2:
+            if((*Tree)->rightSon->balance == 1){
+                leftRotation(Tree);
+                (*Tree)->balance = 0;
+                (*Tree)->leftSon->balance = 0;
+            } else {
+                int balance = (*Tree)->rightSon->leftSon->balance;
+                rightRotation(&(*Tree)->rightSon);
+                leftRotation(Tree);
+                balanceFix(*Tree, balance);
+            }
+            *flag = 0;
+            break;
     }
 }
 
 void insertNode(node** Tree, unsigned int id, long key, char* flag){
-    {
-        if(*Tree == NULL){
-            *Tree = makeNode(id, key);
-            *flag = 1;
+
+    if(*Tree == NULL){
+        *Tree = makeNode(id, key);
+        *flag = 1;
+    } else {
+        if((*Tree)->ID > id){
+            insertNode(&(*Tree)->leftSon, id, key, flag);
+            if(*flag == 1)
+                treatLeftInsertion(&(*Tree), flag);
         } else {
-            if((*Tree)->ID > id)
-            {
-                insertNode(&((*Tree)->leftSon), id, key, flag);
-                if(*flag == 1)
-                    treatLeftInsertion(&(*Tree), flag);
-            }
-            else
-            {
-                insertNode(&((*Tree)->rightSon), id, key, flag);
-                if(*flag == 1)
-                    treatRightInsertion(&(*Tree), flag);
-            }
+            insertNode(&(*Tree)->rightSon, id, key, flag);
+            if(*flag == 1)
+                treatRightInsertion(&(*Tree), flag);
         }
     }
 }
@@ -133,120 +125,129 @@ void treatLeftReduction(node** Tree, char* flag){
 
     (*Tree)->balance++;
 
-    if((*Tree)->balance == 1)
-        *flag = 0;
-
-    else if ((*Tree)->balance == 2)
-    {
-        short shortCut = (*Tree)->rightSon->balance;
-
-        switch (shortCut){
-            case 1:
-                leftRotation(Tree);
-                (*Tree)->balance = 0;
-                (*Tree)->leftSon->balance = 0;
-                *flag = 1;
-                break;
-            case 0:
-                leftRotation(Tree);
-                (*Tree)->balance = -1;
-                (*Tree)->leftSon->balance = 1;
-                *flag = 0;
-                break;
-            case -1:
-                shortCut = (*Tree)->rightSon->leftSon->balance;
-                rightRotation(&(*Tree)->rightSon);
-                leftRotation(Tree);
-                balanceFix(*Tree, shortCut);
-                *flag = 1;
-                break;
-        }
+    //TODO:rename This variable
+    short shortCut;
+    switch((*Tree)->balance){
+        case 1:
+            *flag = 0;
+            break;
+        case 2:
+            shortCut = (*Tree)->rightSon->balance;
+            switch (shortCut){
+                case 1:
+                    leftRotation(Tree);
+                    (*Tree)->balance = 0;
+                    (*Tree)->leftSon->balance = 0;
+                    *flag = 1;
+                    break;
+                case 0:
+                    leftRotation(Tree);
+                    (*Tree)->balance = -1;
+                    (*Tree)->leftSon->balance = 1;
+                    *flag = 0;
+                    break;
+                case -1:
+                    shortCut = (*Tree)->rightSon->leftSon->balance;
+                    rightRotation(&(*Tree)->rightSon);
+                    leftRotation(Tree);
+                    balanceFix(*Tree, shortCut);
+                    *flag = 1;
+                    break;
+            }
+            break;
     }
 }
 
 void treatRightReduction(node** Tree, char* flag){
+
     (*Tree)->balance--;
 
-    if((*Tree)->balance == -1)
-        *flag = 0;
-
-    else if ((*Tree)->balance == -2)
-    {
-        short shortCut = (*Tree)->leftSon->balance;
-
-        switch (shortCut){
-            case -1:
-                rightRotation(Tree);
-                (*Tree)->balance = 0;
-                (*Tree)->rightSon->balance = 0;
-                *flag = 1;
-                break;
-            case 0:
-                rightRotation(Tree);
-                (*Tree)->balance = 1;
-                (*Tree)->rightSon->balance = -1;
-                *flag = 0;
-                break;
-            case 1:
-                shortCut = (*Tree)->leftSon->rightSon->balance;
-                leftRotation(&(*Tree)->leftSon);
-                rightRotation(Tree);
-                balanceFix(*Tree, shortCut);
-                *flag  = 1;
-                break;
-        }
+    short shortCut;
+    switch((*Tree)->balance){
+        case -1:
+            *flag = 0;
+            break;
+        case -2:
+            shortCut = (*Tree)->leftSon->balance;
+            switch (shortCut){
+                case -1:
+                    rightRotation(Tree);
+                    (*Tree)->balance = 0;
+                    (*Tree)->rightSon->balance = 0;
+                    *flag = 1;
+                    break;
+                case 0:
+                    rightRotation(Tree);
+                    (*Tree)->balance = 1;
+                    (*Tree)->rightSon->balance = -1;
+                    *flag = 0;
+                    break;
+                case 1:
+                    shortCut = (*Tree)->leftSon->rightSon->balance;
+                    leftRotation(&(*Tree)->leftSon);
+                    rightRotation(Tree);
+                    balanceFix(*Tree, shortCut);
+                    *flag  = 1;
+                    break;
+            }
+            break;
     }
 }
 
 void removeNode(node** Tree, char* flag, unsigned int id){
-    if((*Tree) != NULL)
-    {
-        if ((*Tree)->ID == id)
-        {
-            if ((*Tree)->rightSon != NULL && (*Tree)->leftSon != NULL)
-            {
-                node *p = (*Tree)->rightSon, copia = *(*Tree);
+
+    if(*Tree != NULL){
+
+        if ((*Tree)->ID == id){
+
+            if ((*Tree)->rightSon != NULL && (*Tree)->leftSon != NULL) {
+
+                node *p = (*Tree)->rightSon, copy = *(*Tree);
 
                 while (p->leftSon != NULL)
                     p = p->leftSon;
 
                 (*Tree)->ID    = p->ID;
                 (*Tree)->key = p->key;
-                p->ID = copia.ID;
-                p->key = copia.key;
+                p->ID = copy.ID;
+                p->key = copy.key;
 
                 removeNode(&(*Tree)->rightSon, flag, id);
 
             }else{
 
-                if ((*Tree)->leftSon != NULL)
-                {
+                if ((*Tree)->leftSon != NULL){
+
                     node *p = (*Tree)->leftSon;
                     *(*Tree) = *(*Tree)->leftSon;
                     free(p);
-                }
-                else if((*Tree)->rightSon != NULL)
-                {
+
+                } else if((*Tree)->rightSon != NULL) {
+
                     node *p = (*Tree)->rightSon;
                     *(*Tree) = *(*Tree)->rightSon;
                     free(p);
-                }else
-                {
-                    free((*Tree));
+
+                } else {
+
+                    free(*Tree);
                     *Tree = NULL;
                 }
                 *flag = 1;
             }
+
         } else if ((*Tree)->ID > id) {
-            removeNode(&((*Tree)->leftSon), flag, id);
+
+            removeNode(&(*Tree)->leftSon, flag, id);
             if(*flag == 1)
                 treatLeftReduction(&(*Tree), flag);
-        }
-        else
-        {
-            removeNode(&((*Tree)->rightSon), flag, id);
+
+        } else {
+
+            removeNode(&(*Tree)->rightSon, flag, id);
             if(*flag == 1)
                 treatRightReduction(&(*Tree), flag);
+
         }
     }
 }
@@ -272,8 +273,8 @@ int altura(node* T){
 void printTree(node* T, int h, int altura){
     int i;
 
-    if (T != NULL)
-    {
+    if (T != NULL){
+
         printTree(T->rightSon, h + 1, altura);
 
         for (i = 0; i < h; i++)
