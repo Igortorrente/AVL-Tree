@@ -1,156 +1,141 @@
-//
-// Created by igor on 24/10/15.
-//
-
 #include "AVL.h"
 
-//TODO: Make this code more generic
-
-node* makeNode(unsigned int id, long key){
+node* makeNode(void* id) {
     node *p = (node*) malloc(sizeof(node));
-    p->ID = id;
-    p->key = key;
+    p->ID = malloc(sizeof(id));
+    memcpy(p->ID, id, sizeof(id));
     p->leftSon = NULL;
     p->rightSon = NULL;
     p->balance = 0;
     return p;
 }
 
-void rightRotation(node **Tree){
-
-    node *aux = (*Tree)->leftSon;
-
-    (*Tree)->leftSon = aux->rightSon;
-    aux->rightSon = *Tree;
-    *Tree = aux;
+void avlInitializer(AVL *Tree){
+    Tree->avlTree = NULL;
+    Tree->comparator = NULL;
 }
 
-void leftRotation(node **Tree){
-
-    node *aux  = (*Tree)->rightSon;
-
-    (*Tree)->rightSon = aux->leftSon;
-    aux->leftSon = *Tree;
-    *Tree = aux;
+void setComparator(AVL *Tree, CompPointer userComparator){
+    Tree->comparator = userComparator;
 }
 
-void balanceFix(node *Tree, int dependency) {
+void rightRotation(node** dad){
 
-    Tree->balance = 0;
+    node *aux = (*dad)->leftSon;
+
+    (*dad)->leftSon = aux->rightSon;
+    aux->rightSon = *dad;
+    *dad = aux;
+}
+
+void leftRotation(node** dad){
+
+    node *aux  = (*dad)->rightSon;
+
+    (*dad)->rightSon = aux->leftSon;
+    aux->leftSon = *dad;
+    *dad = aux;
+}
+
+void balanceFix(node *dad, int dependency) {
+
+    dad->balance = 0;
 
     /* Fix balance based on given information */
     switch (dependency){
         case -1:
-            Tree->leftSon->balance  = 0;
-            Tree->rightSon->balance = 1;
+            dad->leftSon->balance  = 0;
+            dad->rightSon->balance = 1;
             break;
         case  0:
-            Tree->leftSon->balance  = 0;
-            Tree->rightSon->balance = 0;
+            dad->leftSon->balance  = 0;
+            dad->rightSon->balance = 0;
             break;
         case  1:
-            Tree->leftSon->balance  =-1;
-            Tree->rightSon->balance = 0;
+            dad->leftSon->balance  =-1;
+            dad->rightSon->balance = 0;
             break;
     }
 }
 
-void treatLeftInsertion(node** Tree, char* flag){
+void treatLeftInsertion(node** dad, char* flag){
 
-    (*Tree)->balance--;
+    (*dad)->balance--;
 
-    switch((*Tree)->balance){
+    switch((*dad)->balance){
         case 0:
             *flag = 0;
             break;
         case -2:
-            if((*Tree)->leftSon->balance == -1){
-                rightRotation(Tree);
-                (*Tree)->balance = 0;
-                (*Tree)->rightSon->balance = 0;
+            if((*dad)->leftSon->balance == -1){
+                rightRotation(dad);
+                (*dad)->balance = 0;
+                (*dad)->rightSon->balance = 0;
             } else {
-                int balance = (*Tree)->leftSon->rightSon->balance;
-                leftRotation(&(*Tree)->leftSon);
-                rightRotation(Tree);
-                balanceFix(*Tree, balance);
+                int balance = (*dad)->leftSon->rightSon->balance;
+                leftRotation(&(*dad)->leftSon);
+                rightRotation(dad);
+                balanceFix(*dad, balance);
             }
             *flag = 0;
             break;
     }
 }
 
-void treatRightInsertion(node** Tree, char* flag){
+void treatRightInsertion(node** dad, char* flag){
 
-    (*Tree)->balance++;
+    (*dad)->balance++;
 
-    switch((*Tree)->balance){
+    switch((*dad)->balance){
         case 0:
             *flag = 0;
             break;
         case 2:
-            if((*Tree)->rightSon->balance == 1){
-                leftRotation(Tree);
-                (*Tree)->balance = 0;
-                (*Tree)->leftSon->balance = 0;
+            if((*dad)->rightSon->balance == 1){
+                leftRotation(dad);
+                (*dad)->balance = 0;
+                (*dad)->leftSon->balance = 0;
             } else {
-                int balance = (*Tree)->rightSon->leftSon->balance;
-                rightRotation(&(*Tree)->rightSon);
-                leftRotation(Tree);
-                balanceFix(*Tree, balance);
+                int balance = (*dad)->rightSon->leftSon->balance;
+                rightRotation(&(*dad)->rightSon);
+                leftRotation(dad);
+                balanceFix(*dad, balance);
             }
             *flag = 0;
             break;
     }
 }
 
-void insertNode(node** Tree, unsigned int id, long key, char* flag){
+void treatLeftReduction(node** dad, char* flag){
 
-    if(*Tree == NULL){
-        *Tree = makeNode(id, key);
-        *flag = 1;
-    } else {
-        if((*Tree)->ID > id){
-            insertNode(&(*Tree)->leftSon, id, key, flag);
-            if(*flag == 1)
-                treatLeftInsertion(&(*Tree), flag);
-        } else {
-            insertNode(&(*Tree)->rightSon, id, key, flag);
-            if(*flag == 1)
-                treatRightInsertion(&(*Tree), flag);
-        }
-    }
-}
-
-void treatLeftReduction(node** Tree, char* flag){
-
-    (*Tree)->balance++;
+    (*dad)->balance++;
 
     //TODO:rename This variable
     short shortCut;
-    switch((*Tree)->balance){
+    switch((*dad)->balance){
         case 1:
             *flag = 0;
             break;
         case 2:
-            shortCut = (*Tree)->rightSon->balance;
+            shortCut = (*dad)->rightSon->balance;
             switch (shortCut){
                 case 1:
-                    leftRotation(Tree);
-                    (*Tree)->balance = 0;
-                    (*Tree)->leftSon->balance = 0;
+                    leftRotation(dad);
+                    (*dad)->balance = 0;
+                    (*dad)->leftSon->balance = 0;
                     *flag = 1;
                     break;
                 case 0:
-                    leftRotation(Tree);
-                    (*Tree)->balance = -1;
-                    (*Tree)->leftSon->balance = 1;
+                    leftRotation(dad);
+                    (*dad)->balance = -1;
+                    (*dad)->leftSon->balance = 1;
                     *flag = 0;
                     break;
                 case -1:
-                    shortCut = (*Tree)->rightSon->leftSon->balance;
-                    rightRotation(&(*Tree)->rightSon);
-                    leftRotation(Tree);
-                    balanceFix(*Tree, shortCut);
+                    shortCut = (*dad)->rightSon->leftSon->balance;
+                    rightRotation(&(*dad)->rightSon);
+                    leftRotation(dad);
+                    balanceFix(*dad, shortCut);
                     *flag = 1;
                     break;
             }
@@ -158,35 +143,35 @@ void treatLeftReduction(node** Tree, char* flag){
     }
 }
 
-void treatRightReduction(node** Tree, char* flag){
+void treatRightReduction(node** dad, char* flag){
 
-    (*Tree)->balance--;
+    (*dad)->balance--;
 
     short shortCut;
-    switch((*Tree)->balance){
+    switch((*dad)->balance){
         case -1:
             *flag = 0;
             break;
         case -2:
-            shortCut = (*Tree)->leftSon->balance;
+            shortCut = (*dad)->leftSon->balance;
             switch (shortCut){
                 case -1:
-                    rightRotation(Tree);
-                    (*Tree)->balance = 0;
-                    (*Tree)->rightSon->balance = 0;
+                    rightRotation(dad);
+                    (*dad)->balance = 0;
+                    (*dad)->rightSon->balance = 0;
                     *flag = 1;
                     break;
                 case 0:
-                    rightRotation(Tree);
-                    (*Tree)->balance = 1;
-                    (*Tree)->rightSon->balance = -1;
+                    rightRotation(dad);
+                    (*dad)->balance = 1;
+                    (*dad)->rightSon->balance = -1;
                     *flag = 0;
                     break;
                 case 1:
-                    shortCut = (*Tree)->leftSon->rightSon->balance;
-                    leftRotation(&(*Tree)->leftSon);
-                    rightRotation(Tree);
-                    balanceFix(*Tree, shortCut);
+                    shortCut = (*dad)->leftSon->rightSon->balance;
+                    leftRotation(&(*dad)->leftSon);
+                    rightRotation(dad);
+                    balanceFix(*dad, shortCut);
                     *flag  = 1;
                     break;
             }
@@ -194,70 +179,138 @@ void treatRightReduction(node** Tree, char* flag){
     }
 }
 
-void removeNode(node** Tree, char* flag, unsigned int id){
+//TODO: Tratar caso em que o retorno do comparador está fora das especificações
+void insertNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
 
-    if(*Tree != NULL){
+    if(*dad == NULL){
+        *dad = makeNode(id);
+        *flag = 1;
+    } else {
+        if(userComparator((*dad)->ID, id) == 1){
+            insertNodeR(&(*dad)->leftSon, userComparator, id, flag);
+            if(*flag == 1)
+                treatLeftInsertion(&(*dad), flag);
+        } else {
+            insertNodeR(&(*dad)->rightSon, userComparator, id, flag);
+            if(*flag == 1)
+                treatRightInsertion(&(*dad), flag);
+        }
+    }
+}
 
-        if ((*Tree)->ID == id){
+void removeNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
 
-            if ((*Tree)->rightSon != NULL && (*Tree)->leftSon != NULL) {
+    if(*dad != NULL){
 
-                node *p = (*Tree)->rightSon, copy = *(*Tree);
+        if (userComparator((*dad)->ID, id) == 0){
+
+            if ((*dad)->rightSon != NULL && (*dad)->leftSon != NULL) {
+
+                node *p = (*dad)->rightSon, copy = *(*dad);
 
                 while (p->leftSon != NULL)
                     p = p->leftSon;
 
-                (*Tree)->ID    = p->ID;
-                (*Tree)->key = p->key;
+                (*dad)->ID = p->ID;
                 p->ID = copy.ID;
-                p->key = copy.key;
-
-                removeNode(&(*Tree)->rightSon, flag, id);
+                removeNodeR(&(*dad)->rightSon, userComparator, id, flag);
 
             }else{
 
-                if ((*Tree)->leftSon != NULL){
+                if ((*dad)->leftSon != NULL){
 
-                    node *p = (*Tree)->leftSon;
-                    *(*Tree) = *(*Tree)->leftSon;
+                    node* p = (*dad)->leftSon;
+                    *(*dad) = *(*dad)->leftSon;
                     free(p);
 
-                } else if((*Tree)->rightSon != NULL) {
+                } else if((*dad)->rightSon != NULL) {
 
-                    node *p = (*Tree)->rightSon;
-                    *(*Tree) = *(*Tree)->rightSon;
+                    node* p = (*dad)->rightSon;
+                    *(*dad) = *(*dad)->rightSon;
                     free(p);
 
                 } else {
-
-                    free(*Tree);
-                    *Tree = NULL;
+                    free((*dad)->ID);
+                    free(*dad);
+                    *dad = NULL;
                 }
                 *flag = 1;
             }
 
-        } else if ((*Tree)->ID > id) {
+        } else if (userComparator((*dad)->ID, id) == 1) {
 
-            removeNode(&(*Tree)->leftSon, flag, id);
+            removeNodeR(&(*dad)->leftSon, userComparator, id, flag);
             if(*flag == 1)
-                treatLeftReduction(&(*Tree), flag);
+                treatLeftReduction(&(*dad), flag);
 
         } else {
 
-            removeNode(&(*Tree)->rightSon, flag, id);
+            removeNodeR(&(*dad)->rightSon, userComparator, id, flag);
             if(*flag == 1)
-                treatRightReduction(&(*Tree), flag);
+                treatRightReduction(&(*dad), flag);
 
         }
     }
 }
 
+void insertNode(AVL* Tree, void* id){
+    char flag = 0;
+    insertNodeR(&(Tree->avlTree), Tree->comparator, id, &flag);
+}
+
+void removeNode(AVL* Tree, void* id){
+    char flag = 0;
+    removeNodeR(&Tree->avlTree, Tree->comparator, id, &flag);
+}
+
+bool searchNode(AVL* Tree, void* id){
+    
+    node* nextNode = Tree->avlTree;
+
+    while(nextNode != NULL){
+        switch(Tree->comparator(nextNode->ID, id)){
+            case 0:
+                return true;
+            case 1:
+                nextNode = nextNode->leftSon;
+                break;
+            case -1:
+                nextNode = nextNode->rightSon;
+                break;
+        }
+    }
+    return false;
+}
+
+void* getnode(AVL* Tree, void* id){
+    node* nextNode = Tree->avlTree;
+
+    while(nextNode != NULL){
+        switch(Tree->comparator(nextNode->ID, id)){
+            case 0:
+                return nextNode->ID;
+            case 1:
+                nextNode = nextNode->leftSon;
+                break;
+            case -1:
+                nextNode = nextNode->rightSon;
+                break;
+            default:
+                printf("A função comparadora está fora das especificações\n");
+                return NULL;
+        }
+    }
+    return NULL;
+}
+
 void destroyTree(node** No){
-    node *p=*No;
+
+    node* p = *No;
 
     if (p != NULL){
         destroyTree(&(p->rightSon));
         destroyTree(&(p->leftSon));
+        free(p->ID);
         free(p);
         *No = NULL;
     }
@@ -270,6 +323,7 @@ int altura(node* T){
         return(0);
 }
 
+//Vai dar crash com qualquer outro dado
 void printTree(node* T, int h, int altura){
     int i;
 
@@ -280,7 +334,7 @@ void printTree(node* T, int h, int altura){
         for (i = 0; i < h; i++)
             printf("        ");
 
-        printf("%u(%hd)", T->ID, T->balance);
+        printf("%d(%hd)", *((int*)T->ID), T->balance);
 
         for (i = 0; i < altura-h; i++)
             printf("--------");

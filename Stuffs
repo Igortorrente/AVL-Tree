@@ -1,0 +1,65 @@
+teste remoções
+23
+i 40
+i 50
+i 60
+i 100
+i 80
+i 20
+i 10
+i 25
+r 10
+r 60
+r 80
+r 100
+i 10
+i 15
+i 0
+r 40
+i 500
+i 250
+r 20
+r 500
+r 25
+r 0
+r 10
+
+Rotacao dupla a esquerda da reducao a esquerda ok
+Rotacao simples a direita [2] da reducao a direita ok
+Rotacao simples a direita [1] da reducao a direita ok
+Rotacao simples a esquerda [2] da reducao a esquerda ok
+Rotacao dupla da reducao a direita ok
+Rotacao simples a esquerda [1] da reducao a esquerda ok
+
+teste de todas as incerções
+9
+i 40
+i 50
+i 60
+i 100
+i 80
+i 20
+i 10
+i 25
+i 30
+
+mudanças para acomodar string:
+main - linhas 4-13,23,57
+avl.c - 335
+
+só funciona na incerção pois ele tem else no final e não um else if
+logo tenho que tratar!
+
+9
+iserir
+af
+yooo
+fg
+yooz
+yofo
+aa
+e
+a
+remover
+yooz
+yofo

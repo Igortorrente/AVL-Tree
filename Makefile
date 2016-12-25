@@ -1,15 +1,15 @@
 all: AVL.o main.o
-	gcc -std=c11 -o lab06 AVL.o main.o -Werror -Wall -pedantic
+	gcc -std=c11 -o Exe AVL.o main.o -Wall -pedantic
 
 AVL.o: AVL.c
-	gcc -std=c11 -o AVL.o -c AVL.c -Werror -Wall -pedantic
+	gcc -std=c11 -o AVL.o -c AVL.c -Wall -pedantic 
 
 main.o: main.c
-	gcc -std=c11 -o main.o -c main.c -Werror -Wall -pedantic
+	gcc -std=c11 -o main.o -c main.c -Wall -pedantic 
 
 run:
-	./lab06
+	./Exe
 	
-clean:
+clear:
+	rm Exe
 	rm *.o
-	rm lab06
