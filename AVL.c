@@ -337,59 +337,58 @@ void insertNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
     }
 }
 
-//The real remove node function TODO:Here
+//The real remove node function 
 void removeNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
 
     //Wrong way
     if(*dad != NULL){
 
-        if (userComparator((*dad)->ID, id) == 0){
-
-            if ((*dad)->rightSon != NULL && (*dad)->leftSon != NULL) {
-
-                node *p = (*dad)->rightSon, copy = *(*dad);
-
-                while (p->leftSon != NULL)
-                    p = p->leftSon;
-
-                (*dad)->ID = p->ID;
-                p->ID = copy.ID;
+        switch(userComparator((*dad)->ID, id)){
+            case 1:
+                removeNodeR(&(*dad)->leftSon, userComparator, id, flag);
+                if(*flag == 1)
+                    treatLeftReduction(&(*dad), flag);
+                break;
+            case -1:
                 removeNodeR(&(*dad)->rightSon, userComparator, id, flag);
+                if(*flag == 1)
+                    treatRightReduction(&(*dad), flag);
+                break;
+            case 0:
+                if ((*dad)->rightSon != NULL && (*dad)->leftSon != NULL) {
 
-            }else{
+                    node *p = (*dad)->rightSon, copy = *(*dad);
 
-                if ((*dad)->leftSon != NULL){
+                    while (p->leftSon != NULL)
+                        p = p->leftSon;
 
-                    node* p = (*dad)->leftSon;
-                    *(*dad) = *(*dad)->leftSon;
-                    free(p);
+                    (*dad)->ID = p->ID;
+                    p->ID = copy.ID;
 
-                } else if((*dad)->rightSon != NULL) {
+                    removeNodeR(&(*dad)->rightSon, userComparator, id, flag);
 
-                    node* p = (*dad)->rightSon;
-                    *(*dad) = *(*dad)->rightSon;
-                    free(p);
+                }else{
 
-                } else {
-                    free((*dad)->ID);
-                    free(*dad);
-                    *dad = NULL;
+                    if ((*dad)->leftSon != NULL){
+
+                        node* p = (*dad)->leftSon;
+                        *(*dad) = *(*dad)->leftSon;
+                        free(p);
+
+                    } else if((*dad)->rightSon != NULL) {
+
+                        node* p = (*dad)->rightSon;
+                        *(*dad) = *(*dad)->rightSon;
+                        free(p);
+
+                    } else {
+                        free((*dad)->ID);
+                        free(*dad);
+                        *dad = NULL;
+                    }
+                    *flag = 1;
                 }
-                *flag = 1;
-            }
-
-        } else if (userComparator((*dad)->ID, id) == 1) {
-
-            removeNodeR(&(*dad)->leftSon, userComparator, id, flag);
-            if(*flag == 1)
-                treatLeftReduction(&(*dad), flag);
-
-        } else {
-
-            removeNodeR(&(*dad)->rightSon, userComparator, id, flag);
-            if(*flag == 1)
-                treatRightReduction(&(*dad), flag);
-
+                break;
         }
     }
 }
