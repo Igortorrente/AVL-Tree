@@ -1,5 +1,141 @@
 #include "AVL.h"
 
+
+//USER FUNCTIONS
+
+
+//Initialize struct AVL
+void avlInitializer(AVL* Tree){
+    Tree->avlTree = NULL;
+    Tree->comparator = NULL;
+}
+
+/*Remove all nodes of tree
+ *Parameters : 1 - address node pointer. (&(ExampleTree.avlTree))
+ *Return     : void  */
+void ClearTree(node** No){
+
+    node* p = *No;
+
+    if (p != NULL){
+        ClearTree(&(p->rightSon));
+        ClearTree(&(p->leftSon));
+        free(p->ID);
+        free(p);
+        *No = NULL;
+    }
+}
+
+/*Verify if Tree is empty
+ *Parameters : 1 - Struct AVL
+ *Return     : Bool - False if tree is empty / True else  */
+bool empty(AVL Tree) {
+    if(Tree.avlTree != NULL)
+        return false;
+    return true;
+}
+
+/*Return content of required node
+ *Parameters : 1 - Struct AVL, 2 - Node you want get the content
+ *Return     : void* return a pointer to node content  */
+void* getnode(AVL Tree, void *id){
+    node* nextNode = Tree.avlTree;
+
+    while(nextNode != NULL){
+        switch(Tree.comparator(nextNode->ID, id)){
+            case 0:
+                return nextNode->ID;
+            case 1:
+                nextNode = nextNode->leftSon;
+                break;
+            case -1:
+                nextNode = nextNode->rightSon;
+                break;
+            default:
+                return NULL;
+        }
+    }
+    return NULL;
+}
+
+/*User function insert node
+ *Parameters : 1 - Struct AVl , 2 - Data you want put in tree
+ *Return     : Void  */
+void insertNode(AVL* Tree, void* id){
+    char flag = 0;
+    insertNodeR(&(Tree->avlTree), Tree->comparator, id, &flag);
+}
+
+/*User function remove node
+ *Parameters : 1 - Struct AVl , 2 - Data you want remove in tree
+ *Return     : void  */
+void removeNode(AVL* Tree, void* id){
+    char flag = 0;
+    removeNodeR(&Tree->avlTree, Tree->comparator, id, &flag);
+}
+
+/*Return if node are in tree
+ *Parameters : 1 - Struct AVl , 2 - Data you want search in tree
+ *Return     : bool - False if node if not in tree / True else  */
+bool searchNode(AVL Tree, void *id){
+
+    node* nextNode = Tree.avlTree;
+
+    while(nextNode != NULL){
+        switch(Tree.comparator(nextNode->ID, id)){
+            case 0:
+                return true;
+            case 1:
+                nextNode = nextNode->leftSon;
+                break;
+            case -1:
+                nextNode = nextNode->rightSon;
+                break;
+        }
+    }
+    return false;
+}
+
+//Copy the address of function comparator to struct AVL
+void setComparator(AVL* Tree, CompPointer userComparator){
+    Tree->comparator = userComparator;
+}
+
+//TODO: Remove this function...
+int altura(node* T){
+    if (T != NULL)
+        return 1 + MAX(altura(T->leftSon), altura(T->rightSon));
+    else
+        return(0);
+}
+
+//And This
+void printTree(node* T, int h, int altura){
+    int i;
+
+    if (T != NULL){
+
+        printTree(T->rightSon, h + 1, altura);
+
+        for (i = 0; i < h; i++)
+            printf("        ");
+
+        printf("%d(%hd)", *((int*)T->ID), T->balance);
+
+        for (i = 0; i < altura-h; i++)
+            printf("--------");
+
+        printf("\n");
+
+        printTree(T->leftSon, h + 1, altura);
+    }
+}
+
+
+//PRIVATE FUNCTIONS
+
+
+//Create a node and initialize their content
 node* makeNode(void* id) {
     node *p = (node*) malloc(sizeof(node));
     p->ID = malloc(sizeof(id));
@@ -10,15 +146,7 @@ node* makeNode(void* id) {
     return p;
 }
 
-void avlInitializer(AVL* Tree){
-    Tree->avlTree = NULL;
-    Tree->comparator = NULL;
-}
-
-void setComparator(AVL* Tree, CompPointer userComparator){
-    Tree->comparator = userComparator;
-}
-
+//Rotate to right
 void rightRotation(node** dad){
 
     node *aux = (*dad)->leftSon;
@@ -28,6 +156,7 @@ void rightRotation(node** dad){
     *dad = aux;
 }
 
+//Rotate to left
 void leftRotation(node** dad){
 
     node *aux  = (*dad)->rightSon;
@@ -37,11 +166,11 @@ void leftRotation(node** dad){
     *dad = aux;
 }
 
+// Fix balance based on given information
 void balanceFix(node* dad, int dependency) {
 
     dad->balance = 0;
 
-    /* Fix balance based on given information */
     switch (dependency){
         case -1:
             dad->leftSon->balance  = 0;
@@ -58,6 +187,7 @@ void balanceFix(node* dad, int dependency) {
     }
 }
 
+//Verify and treat a insertion in right subtree
 void treatLeftInsertion(node** dad, char* flag){
 
     (*dad)->balance--;
@@ -82,6 +212,7 @@ void treatLeftInsertion(node** dad, char* flag){
     }
 }
 
+//Verify and treat a insertion in left subtree
 void treatRightInsertion(node** dad, char* flag){
 
     (*dad)->balance++;
@@ -106,6 +237,7 @@ void treatRightInsertion(node** dad, char* flag){
     }
 }
 
+//Verify and treat a removal in left subtree
 void treatLeftReduction(node** dad, char* flag){
 
     (*dad)->balance++;
@@ -142,6 +274,7 @@ void treatLeftReduction(node** dad, char* flag){
     }
 }
 
+//Verify and treat a removal in right subtree
 void treatRightReduction(node** dad, char* flag){
 
     (*dad)->balance--;
@@ -178,32 +311,36 @@ void treatRightReduction(node** dad, char* flag){
     }
 }
 
+//The real insert node function
 void insertNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
 
+    //The function is on leaf, create node and set flag
     if(*dad == NULL){
         *dad = makeNode(id);
         *flag = 1;
     } else {
         switch(userComparator((*dad)->ID, id)){
+            //Go to left
             case 1:
                 insertNodeR(&(*dad)->leftSon, userComparator, id, flag);
                 if(*flag == 1)
                     treatLeftInsertion(&(*dad), flag);
                 break;
+            //Go to right
             case -1:
             case  0:
                 insertNodeR(&(*dad)->rightSon, userComparator, id, flag);
                 if(*flag == 1)
                     treatRightInsertion(&(*dad), flag);
                 break;
-            default:
-                return;
         }
     }
 }
 
+//The real remove node function TODO:Here
 void removeNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
 
+    //Wrong way
     if(*dad != NULL){
 
         if (userComparator((*dad)->ID, id) == 0){
@@ -257,100 +394,3 @@ void removeNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
     }
 }
 
-void insertNode(AVL* Tree, void* id){
-    char flag = 0;
-    insertNodeR(&(Tree->avlTree), Tree->comparator, id, &flag);
-}
-
-void removeNode(AVL* Tree, void* id){
-    char flag = 0;
-    removeNodeR(&Tree->avlTree, Tree->comparator, id, &flag);
-}
-
-bool searchNode(AVL* Tree, void* id){
-    
-    node* nextNode = Tree->avlTree;
-
-    while(nextNode != NULL){
-        switch(Tree->comparator(nextNode->ID, id)){
-            case 0:
-                return true;
-            case 1:
-                nextNode = nextNode->leftSon;
-                break;
-            case -1:
-                nextNode = nextNode->rightSon;
-                break;
-        }
-    }
-    return false;
-}
-
-bool empty(AVL* Tree) {
-    if(Tree->avlTree != NULL)
-        return false;
-    return true;
-}
-
-void* getnode(AVL* Tree, void* id){
-    node* nextNode = Tree->avlTree;
-
-    while(nextNode != NULL){
-        switch(Tree->comparator(nextNode->ID, id)){
-            case 0:
-                return nextNode->ID;
-            case 1:
-                nextNode = nextNode->leftSon;
-                break;
-            case -1:
-                nextNode = nextNode->rightSon;
-                break;
-            default:
-                printf("A função comparadora está fora das especificações\n");
-                return NULL;
-        }
-    }
-    return NULL;
-}
-
-void ClearTree(node **No){
-
-    node* p = *No;
-
-    if (p != NULL){
-        ClearTree(&(p->rightSon));
-        ClearTree(&(p->leftSon));
-        free(p->ID);
-        free(p);
-        *No = NULL;
-    }
-}
-
-int altura(node* T){
-    if (T != NULL)
-        return 1 + MAX(altura(T->leftSon), altura(T->rightSon));
-    else
-        return(0);
-}
-
-//Vai dar crash com qualquer outro dado
-void printTree(node* T, int h, int altura){
-    int i;
-
-    if (T != NULL){
-
-        printTree(T->rightSon, h + 1, altura);
-
-        for (i = 0; i < h; i++)
-            printf("        ");
-
-        printf("%d(%hd)", *((int*)T->ID), T->balance);
-
-        for (i = 0; i < altura-h; i++)
-            printf("--------");
-
-        printf("\n");
-
-        printTree(T->leftSon, h + 1, altura);
-    }
-}

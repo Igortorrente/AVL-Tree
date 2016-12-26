@@ -25,22 +25,21 @@ typedef struct avl{
     CompPointer comparator;
 }AVL;
 
-//TODO: Improve printTree
 
 void avlInitializer(AVL* Tree);
 void ClearTree(node **No);
-bool empty(AVL* Tree);
-void* getnode(AVL* Tree, void* id);
+bool empty(AVL Tree);
+void* getnode(AVL Tree, void *id);
 void insertNode(AVL* Tree, void* id);
 void removeNode(AVL* Tree, void* id);
-bool searchNode(AVL* Tree, void* id);
+bool searchNode(AVL Tree, void *id);
 void setComparator(AVL* Tree, CompPointer userComparator);
 int  altura(node* T);
 void printTree(node* T, int h, int altura);
 
 
 /*User comparator prototype :
- * int YourComparator(yourdata A,yourdata B)
+ * int YourComparator(yourdata A, yourdata B)
  * Expected returns :  1 if  A > B
  *                     0 if  A == B
  *                    -1 if  A < B        */
