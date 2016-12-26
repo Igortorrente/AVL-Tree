@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "AVL.h"
 
-int Test(void* a, void* b){
+//This a example of comparator
+
+int ExampleComparator(void *a, void *b){
     if(*((int*)a) > *((int*)b))
         return 1;
     else if (*((int*)a) == *((int*)b))
@@ -10,8 +12,9 @@ int Test(void* a, void* b){
         return -1;
 }
 
+//This another example os camparator
 /*
-int Test(void* a, void* b){
+int ExampleComparator(void* a, void* b){
     int retorno = strcmp((char*)a, (char*)b);
 
     if (retorno > 0)
@@ -31,54 +34,56 @@ int main(){
     void* aux;
 
 
-    AVL COW;
-    avlInitializer(&COW);
-    setComparator (&COW, (CompPointer) Test);
+    AVL ExampleTree;
+    avlInitializer(&ExampleTree);
+    setComparator(&ExampleTree, (CompPointer) ExampleComparator);
 
     scanf("%d", &num_comandos);
 
     for(i = 0; i < num_comandos; i++){
 
+        printf("Comand : ");
         scanf(" %c", &leitura[0]);
+
         switch(leitura[0]){
             case 'r':
                 scanf(" %d", &id);
-                removeNode(&COW, &id);
+                removeNode(&ExampleTree, &id);
                 printf("\n=======================================\n\n");
-                printTree(COW.avlTree, 0, altura(COW.avlTree));
+                printTree(ExampleTree.avlTree, 0, altura(ExampleTree.avlTree));
                 break;
             case 'i':
                 scanf(" %d", &id);
-                insertNode(&COW, &id);
+                insertNode(&ExampleTree, &id);
                 printf("\n=======================================\n\n");
-                printTree(COW.avlTree, 0, altura(COW.avlTree));
+                printTree(ExampleTree.avlTree, 0, altura(ExampleTree.avlTree));
                 break;
             case 's':
                 scanf(" %d", &id);
-                if(searchNode(&COW, &id))
+                if(searchNode(ExampleTree, &id))
                     printf("Found\n");
                 else
                     printf("Not found\n");
                 break;
             case 'g':
                 scanf(" %d", &id);
-                aux = getnode(&COW, &id);
+                aux = getnode(ExampleTree, &id);
                 if(aux != NULL)
                     printf("Content %d \n", *((int*)aux));
                 else
                     printf("Node not found\n");
                 break;
             case 'e':
-                destroyTree(&(COW.avlTree));
+                ClearTree(&(ExampleTree.avlTree));
                 return 0;
             default:
                 printf("%c invalid command. Try r,i,e or s\n", leitura[0]);
                 break;
         }
-        printf("\n");            
+        printf("\n");
     }
 
-    destroyTree(&(COW.avlTree));
+    ClearTree(&(ExampleTree.avlTree));
 
     return 0;
 }
