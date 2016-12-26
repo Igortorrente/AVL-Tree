@@ -10,12 +10,12 @@ node* makeNode(void* id) {
     return p;
 }
 
-void avlInitializer(AVL *Tree){
+void avlInitializer(AVL* Tree){
     Tree->avlTree = NULL;
     Tree->comparator = NULL;
 }
 
-void setComparator(AVL *Tree, CompPointer userComparator){
+void setComparator(AVL* Tree, CompPointer userComparator){
     Tree->comparator = userComparator;
 }
 
@@ -37,7 +37,7 @@ void leftRotation(node** dad){
     *dad = aux;
 }
 
-void balanceFix(node *dad, int dependency) {
+void balanceFix(node* dad, int dependency) {
 
     dad->balance = 0;
 
@@ -280,6 +280,12 @@ bool searchNode(AVL* Tree, void* id){
         }
     }
     return false;
+}
+
+bool empty(AVL* Tree) {
+    if(Tree->avlTree != NULL)
+        return false;
+    return true;
 }
 
 void* getnode(AVL* Tree, void* id){
