@@ -110,7 +110,6 @@ void treatLeftReduction(node** dad, char* flag){
 
     (*dad)->balance++;
 
-    //TODO:rename This variable
     short shortCut;
     switch((*dad)->balance){
         case 1:
@@ -179,21 +178,26 @@ void treatRightReduction(node** dad, char* flag){
     }
 }
 
-//TODO: Tratar caso em que o retorno do comparador está fora das especificações
 void insertNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
 
     if(*dad == NULL){
         *dad = makeNode(id);
         *flag = 1;
     } else {
-        if(userComparator((*dad)->ID, id) == 1){
-            insertNodeR(&(*dad)->leftSon, userComparator, id, flag);
-            if(*flag == 1)
-                treatLeftInsertion(&(*dad), flag);
-        } else {
-            insertNodeR(&(*dad)->rightSon, userComparator, id, flag);
-            if(*flag == 1)
-                treatRightInsertion(&(*dad), flag);
+        switch(userComparator((*dad)->ID, id)){
+            case 1:
+                insertNodeR(&(*dad)->leftSon, userComparator, id, flag);
+                if(*flag == 1)
+                    treatLeftInsertion(&(*dad), flag);
+                break;
+            case -1:
+            case  0:
+                insertNodeR(&(*dad)->rightSon, userComparator, id, flag);
+                if(*flag == 1)
+                    treatRightInsertion(&(*dad), flag);
+                break;
+            default:
+                return;
         }
     }
 }
@@ -309,13 +313,13 @@ void* getnode(AVL* Tree, void* id){
     return NULL;
 }
 
-void destroyTree(node** No){
+void ClearTree(node **No){
 
     node* p = *No;
 
     if (p != NULL){
-        destroyTree(&(p->rightSon));
-        destroyTree(&(p->leftSon));
+        ClearTree(&(p->rightSon));
+        ClearTree(&(p->leftSon));
         free(p->ID);
         free(p);
         *No = NULL;

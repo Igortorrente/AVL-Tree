@@ -28,7 +28,7 @@ typedef struct avl{
 //TODO: Improve printTree
 
 void avlInitializer(AVL* Tree);
-void destroyTree(node** No);
+void ClearTree(node **No);
 bool empty(AVL* Tree);
 void* getnode(AVL* Tree, void* id);
 void insertNode(AVL* Tree, void* id);

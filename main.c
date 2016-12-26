@@ -39,7 +39,9 @@ int main(){
 
     for(i = 0; i < num_comandos; i++){
 
+        printf("Comand : ");
         scanf(" %c", &leitura[0]);
+
         switch(leitura[0]){
             case 'r':
                 scanf(" %d", &id);
@@ -69,16 +71,16 @@ int main(){
                     printf("Node not found\n");
                 break;
             case 'e':
-                destroyTree(&(ExampleTree.avlTree));
+                ClearTree(&(ExampleTree.avlTree));
                 return 0;
             default:
                 printf("%c invalid command. Try r,i,e or s\n", leitura[0]);
                 break;
         }
-        printf("\nComand : ");
+        printf("\n");
     }
 
-    destroyTree(&(ExampleTree.avlTree));
+    ClearTree(&(ExampleTree.avlTree));
 
     return 0;
 }
