@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "AVL.h"
 
+//This a example of comparator
+
 int ExampleComparator(void *a, void *b){
     if(*((int*)a) > *((int*)b))
         return 1;
@@ -10,6 +12,7 @@ int ExampleComparator(void *a, void *b){
         return -1;
 }
 
+//This another example os camparator
 /*
 int ExampleComparator(void* a, void* b){
     int retorno = strcmp((char*)a, (char*)b);
@@ -57,14 +60,14 @@ int main(){
                 break;
             case 's':
                 scanf(" %d", &id);
-                if(searchNode(&ExampleTree, &id))
+                if(searchNode(ExampleTree, &id))
                     printf("Found\n");
                 else
                     printf("Not found\n");
                 break;
             case 'g':
                 scanf(" %d", &id);
-                aux = getnode(&ExampleTree, &id);
+                aux = getnode(ExampleTree, &id);
                 if(aux != NULL)
                     printf("Content %d \n", *((int*)aux));
                 else
