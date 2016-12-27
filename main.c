@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "AVL.h"
 
+
+//This a example of comparator
 int ExampleComparator(void *a, void *b){
     if(*((int*)a) > *((int*)b))
         return 1;
@@ -10,6 +12,7 @@ int ExampleComparator(void *a, void *b){
         return -1;
 }
 
+//This another example os camparator
 /*
 int ExampleComparator(void* a, void* b){
     int retorno = strcmp((char*)a, (char*)b);
@@ -39,7 +42,9 @@ int main(){
 
     for(i = 0; i < num_comandos; i++){
 
+        printf("Comand : ");
         scanf(" %c", &leitura[0]);
+
         switch(leitura[0]){
             case 'r':
                 scanf(" %d", &id);
@@ -55,30 +60,30 @@ int main(){
                 break;
             case 's':
                 scanf(" %d", &id);
-                if(searchNode(&ExampleTree, &id))
+                if(searchNode(ExampleTree, &id))
                     printf("Found\n");
                 else
                     printf("Not found\n");
                 break;
             case 'g':
                 scanf(" %d", &id);
-                aux = getnode(&ExampleTree, &id);
+                aux = getnode(ExampleTree, &id);
                 if(aux != NULL)
                     printf("Content %d \n", *((int*)aux));
                 else
                     printf("Node not found\n");
                 break;
             case 'e':
-                destroyTree(&(ExampleTree.avlTree));
+                ClearTree(&(ExampleTree.avlTree));
                 return 0;
             default:
                 printf("%c invalid command. Try r,i,e or s\n", leitura[0]);
                 break;
         }
-        printf("\nComand : ");
+        printf("\n");
     }
 
-    destroyTree(&(ExampleTree.avlTree));
+    ClearTree(&(ExampleTree.avlTree));
 
     return 0;
 }
