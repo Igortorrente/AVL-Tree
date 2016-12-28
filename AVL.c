@@ -38,7 +38,7 @@ bool empty(AVL Tree) {
 /*Return content of required node
  *Parameters : 1 - Struct AVL, 2 - Node you want get the content
  *Return     : void* return a pointer to node content  */
-void* getnode(AVL Tree, void *id){
+void* getnode(AVL Tree, void* id){
     node* nextNode = Tree.avlTree;
 
     while(nextNode != NULL){
@@ -77,7 +77,7 @@ void removeNode(AVL* Tree, void* id){
 /*Return if node are in tree
  *Parameters : 1 - Struct AVl , 2 - Data you want search in tree
  *Return     : bool - False if node if not in tree / True else  */
-bool searchNode(AVL Tree, void *id){
+bool searchNode(AVL Tree, void* id){
 
     node* nextNode = Tree.avlTree;
 
@@ -136,7 +136,7 @@ void printTree(node* T, int h, int altura){
 
 
 //Create a node and initialize their content
-node* makeNode(void* id) {
+node* makeNode(void* id){
     node *p = (node*) malloc(sizeof(node));
     p->ID = malloc(sizeof(id));
     memcpy(p->ID, id, sizeof(id));
@@ -145,7 +145,6 @@ node* makeNode(void* id) {
     p->balance = 0;
     return p;
 }
-
 
 //Rotate to right
 void rightRotation(node** dad){
@@ -168,7 +167,7 @@ void leftRotation(node** dad){
 }
 
 // Fix balance based on given information
-void balanceFix(node* dad, int dependency) {
+void balanceFix(node* dad, int dependency){
 
     dad->balance = 0;
 
@@ -313,7 +312,7 @@ void treatRightReduction(node** dad, char* flag){
 }
 
 //The real insert node function
-void insertNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
+void insertNodeR(node** dad, CompPointer userComparator, void* id, char* flag){
 
     //The function is on leaf, create node and set flag
     if(*dad == NULL){
@@ -338,8 +337,8 @@ void insertNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
     }
 }
 
-//The real remove node function 
-void removeNodeR(node** dad, CompPointer userComparator, void* id, char* flag) {
+//The real remove node function
+void removeNodeR(node** dad, CompPointer userComparator, void* id, char* flag){
 
     //Wrong way
     if(*dad != NULL){
