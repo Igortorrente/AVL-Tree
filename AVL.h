@@ -2,11 +2,8 @@
 #define LAB06_AVL_H
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-
-#define MAX(x, y) ((x > y) ? x : y)
 
 typedef int (*CompPointer)(const void*, const void*);
 
@@ -33,8 +30,6 @@ void insertNode(AVL* Tree, void* id);
 void removeNode(AVL* Tree, void* id);
 bool searchNode(AVL Tree, void* id);
 void setComparator(AVL* Tree, CompPointer userComparator);
-int  altura(node* T);
-void printTree(node* T, int h, int altura);
 
 
 /*User comparator prototype :

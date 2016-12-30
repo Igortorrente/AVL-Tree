@@ -100,36 +100,6 @@ void setComparator(AVL* Tree, CompPointer userComparator){
     Tree->comparator = userComparator;
 }
 
-//TODO: Remove this function...
-int altura(node* T){
-    if (T != NULL)
-        return 1 + MAX(altura(T->leftSon), altura(T->rightSon));
-    else
-        return(0);
-}
-
-//And This
-void printTree(node* T, int h, int altura){
-    int i;
-
-    if (T != NULL){
-
-        printTree(T->rightSon, h + 1, altura);
-
-        for (i = 0; i < h; i++)
-            printf("        ");
-
-        printf("%d(%hd)", *((int*)T->ID), T->balance);
-
-        for (i = 0; i < altura-h; i++)
-            printf("--------");
-
-        printf("\n");
-
-        printTree(T->leftSon, h + 1, altura);
-    }
-}
-
 
 //PRIVATE FUNCTIONS
 

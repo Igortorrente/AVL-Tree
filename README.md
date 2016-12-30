@@ -6,8 +6,8 @@
 ##Requirements
 > * stdlib.h
 > * stdbool.h
-> * stdio.h
 > * string.h
+> * compiler compatible with standard C 2011
 
 ##Comparator
 
