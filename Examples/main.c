@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "AVL.h"
+#include "../AVL.h"
 
 
 //This a example of comparator

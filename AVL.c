@@ -3,7 +3,6 @@
 
 //USER FUNCTIONS
 
-
 //Initialize struct AVL
 void avlInitializer(AVL* Tree){
     Tree->avlTree = NULL;
