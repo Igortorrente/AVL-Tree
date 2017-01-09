@@ -3,6 +3,7 @@
 
 //USER FUNCTIONS
 
+
 //Initialize struct AVL
 void avlInitializer(AVL* Tree){
     Tree->avlTree = NULL;
@@ -29,6 +30,7 @@ void ClearTree(node** No){
  *Parameters : 1 - Struct AVL
  *Return     : Bool - False if tree is empty / True else  */
 bool empty(AVL Tree) {
+
     if(Tree.avlTree != NULL)
         return false;
     return true;
@@ -38,6 +40,7 @@ bool empty(AVL Tree) {
  *Parameters : 1 - Struct AVL, 2 - Node you want get the content
  *Return     : void* return a pointer to node content  */
 void* getnode(AVL Tree, void* id){
+
     node* nextNode = Tree.avlTree;
 
     while(nextNode != NULL){
@@ -61,7 +64,9 @@ void* getnode(AVL Tree, void* id){
  *Parameters : 1 - Struct AVl , 2 - Data you want put in tree
  *Return     : Void  */
 void insertNode(AVL* Tree, void* id){
+
     char flag = 0;
+
     insertNodeR(&(Tree->avlTree), Tree->comparator, id, &flag);
 }
 
@@ -69,7 +74,9 @@ void insertNode(AVL* Tree, void* id){
  *Parameters : 1 - Struct AVl , 2 - Data you want remove in tree
  *Return     : void  */
 void removeNode(AVL* Tree, void* id){
+
     char flag = 0;
+
     removeNodeR(&Tree->avlTree, Tree->comparator, id, &flag);
 }
 
@@ -106,7 +113,12 @@ void setComparator(AVL* Tree, CompPointer userComparator){
 
 //Create a node and initialize their content
 node* makeNode(void* id){
+
     node *p = (node*) malloc(sizeof(node));
+
+    if(p == NULL)
+        return p;
+
     p->ID = malloc(sizeof(id));
     memcpy(p->ID, id, sizeof(id));
     p->leftSon = NULL;

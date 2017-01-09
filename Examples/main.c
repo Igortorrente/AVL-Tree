@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "../AVL.h"
 
-
 #define MAX(x, y) ((x > y) ? x : y)
 
 //Prototype Print functions(For debug)
@@ -69,7 +68,6 @@ int main(){
     return 0;
 }
 
-//TODO: Remove this function...
 int altura(node* T){
     if (T != NULL)
         return 1 + MAX(altura(T->leftSon), altura(T->rightSon));
