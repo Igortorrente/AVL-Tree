@@ -12,14 +12,15 @@
 ## Comparator
 
 ##### Model of Comparator
-   ``` 
+   ``` c 
     int YourComparator(void* A, void* B )
    ```
 ##### Returns:
-  ```
-   0 if A = B
-   1 if A > B
-  -1 if A < B
-  ```
+
+|     Return    |    Condition  |
+|:-------------:| :------------:| 
+|       0       |    A  =  B    | 
+|       1       |    A  >  B    |
+|      -1       |    A  <  B    |
     
     
