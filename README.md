@@ -1,21 +1,21 @@
 # AVL-Tree
 
-##About
+## About
  Generic Implementation of  AVL Tree in C
 
-##Requirements
+## Requirements
 > * stdlib.h
 > * stdbool.h
 > * string.h
 > * compiler compatible with standard C 2011
 
-##Comparator
+## Comparator
 
-#####Model of Comparator
+##### Model of Comparator
    ``` 
     int YourComparator(void* A, void* B )
    ```
-#####Returns:
+##### Returns:
   ```
    0 if A = B
    1 if A > B
